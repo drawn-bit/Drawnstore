@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DrawnStore — Toko Produk Digital</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; transition: background-color .3s, color .3s, border-color .3s; }
+
+  :root {
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --header: #ffffff;
+    --text: #0f172a;
+    --text2: #64748b;
+    --border: #e2e8f0;
+    --accent: #8b5cf6;
+    --accent2: #7c3aed;
+    --shadow: 0 8px 24px rgba(0,0,0,.08);
+    --modal: #ffffff;
+    --welcome-bg: linear-gradient(135deg, #8b5cf6, #ec4899, #f97316);
+  }
+
+  body.dark {
+    --bg: #0b1120;
+    --card: #1e293b;
+    --header: #1e293b;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --border: #334155;
+    --accent: #a78bfa;
+    --accent2: #c4b5fd;
+    --shadow: 0 8px 24px rgba(0,0,0,.5);
+    --modal: #1e293b;
+    --welcome-bg: linear-gradient(135deg, #6d28d9, #be185d, #c2410c);
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px 16px 60px;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(139,92,246,.10) 0, transparent 30%),
+      radial-gradient(circle at 90% 20%, rgba(236,72,153,.10) 0, transparent 30%),
+      radial-gradient(circle at 50% 90%, rgba(249,115,22,.10) 0, transparent 30%);
+    background-attachment: fixed;
+  }
+
+  /* HEADER */
+  .header {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    padding: 14px 26px;
+    background: var(--header);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand { display:flex; align-items:center; gap:14px; }
+
+  .brand-logo {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+    border: 2px solid var(--accent);
+    background: #ffffff;
+    box-shadow: 0 6px 16px rgba(139,92,246,.35);
+    padding: 2px;
+  }
+
+  .brand h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -.5px;
+  }
+
+  .toggle {
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 5px;
+    border-radius: 40px;
+  }
+  .toggle button {
+    border: none;
+    background: transparent;
+    color: var(--text2);
+    padding: 9px 18px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: .9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .toggle button.active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(139,92,246,.45);
+  }
+
+  /* ===== UCAPAN SELAMAT DATANG ===== */
+  .welcome {
+    max-width: 1200px;
+    margin: 0 auto 36px;
+    padding: 32px 26px;
+    background: var(--welcome-bg);
+    border-radius: 24px;
+    box-shadow: 0 20px 40px -12px rgba(139,92,246,.5);
+    text-align: center;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 25%, rgba(255,255,255,.20) 0, transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(255,255,255,.15) 0, transparent 40%);
+    pointer-events: none;
+  }
+  .welcome h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    position: relative;
+    text-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  .welcome p {
+    font-size: 1rem;
+    opacity: .95;
+    position: relative;
+    line-height: 1.6;
+  }
+  .welcome .wave {
+    display: inline-block;
+    animation: wave 1.8s infinite;
+    transform-origin: 70% 70%;
+  }
+  @keyframes wave {
+    0%, 60%, 100% { transform: rotate(0deg); }
+    10%, 30% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+  }
+
+  /* GRID */
+  .grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 18px 18px 22px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 30px -10px rgba(0,0,0,.25);
+  }
+
+  .badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-size: .7rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 30px;
+    color: #fff;
+    letter-spacing: .3px;
+    z-index: 2;
+  }
+  .badge.ready { background: #22c55e; box-shadow: 0 3px 10px rgba(34,197,94,.5); }
+  .badge.out   { background: #ef4444; box-shadow: 0 3px 10px rgba(239,68,68,.5); }
+
+  .img {
+    height: 130px;
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(139,92,246,.15), rgba(236,72,153,.12));
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.4rem;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .img i { filter: drop-shadow(0 6px 10px rgba(139,92,246,.35)); }
+
+  .name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+  .desc {
+    font-size: .82rem;
+    color: var(--text2);
+    line-height: 1.5;
+    margin-bottom: 14px;
+    flex: 1;
+  }
+  .price {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .price small {
+    font-size: .75rem;
+    font-weight: 500;
+    color: var(--text2);
+    margin-left: 4px;
+  }
+
+  .btn-buy {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    padding: 13px 16px;
+    font-weight: 700;
+    font-size: .95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 8px 18px -6px rgba(139,92,246,.6);
+  }
+  .btn-buy:hover { background: var(--accent2); }
+
+  /* MODAL */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.6);
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .overlay.show { display: flex; }
+
+  .modal {
+    background: var(--modal);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 26px 22px 22px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 30px 60px rgba(0,0,0,.5);
+    position: relative;
+    animation: pop .25s ease;
+  }
+  @keyframes pop {
+    from { opacity:0; transform: scale(.9) translateY(10px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
+  }
+
+  .close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .close:hover { background: var(--accent); color: #fff; }
+
+  .modal h2 {
+    font-size: 1.35rem;
+    margin-bottom: 4px;
+    padding-right: 30px;
+  }
+  .modal .sub {
+    font-size: .85rem;
+    color: var(--text2);
+    margin-bottom: 18px;
+  }
+
+  .info-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: .9rem;
+    gap: 12px;
+  }
+  .info-row span:first-child { color: var(--text2); flex-shrink: 0; }
+  .info-row span:last-child { font-weight: 700; text-align: right; }
+
+  .btn-wa {
+    width: 100%;
+    background: #25D366;
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    padding: 15px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 10px 20px -8px rgba(37,211,102,.7);
+  }
+  .btn-wa:hover { background: #1eb85a; }
+  .btn-wa i { font-size: 1.35rem; }
+
+  /* ===== TULISAN PENUTUP ===== */
+  .closing {
+    max-width: 1200px;
+    margin: 60px auto 0;
+    padding: 30px 24px;
+    text-align: center;
+    border: 1px dashed var(--border);
+    border-radius: 20px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+  .closing h3 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #8b5cf6, #ec4899, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .closing p {
+    color: var(--text2);
+    font-size: .9rem;
+    line-height: 1.7;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .closing .heart {
+    color: #ef4444;
+    animation: beat 1.2s infinite;
+    display: inline-block;
+  }
+  @keyframes beat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+  }
+  .closing .divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #8b5cf6, #ec4899);
+    border-radius: 3px;
+    margin: 14px auto;
+  }
+
+  footer {
+    max-width: 1200px;
+    margin: 30px auto 0;
+    text-align: center;
+    color: var(--text2);
+    font-size: .8rem;
+  }
+
+  @media (max-width: 600px) {
+    .header { flex-direction: column; align-items: flex-start; }
+    .brand h1 { font-size: 1.6rem; }
+    .brand-logo { width: 52px; height: 52px; }
+    .toggle { width: 100%; justify-content: center; }
+    .grid { gap: 16px; }
+    .welcome { padding: 24px 18px; }
+    .welcome h2 { font-size: 1.4rem; }
+    .welcome p { font-size: .9rem; }
+    .closing h3 { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <img
+      src="https://i.pinimg.com/originals/6e/1c/6c/6e1c6c9b8b9a4b4b8b9a4b4b8b9a4b4b.png"
+      alt="Logo DrawnStore"
+      class="brand-logo"
+      onerror="this.onerror=null;this.src='https://api.dicebear.com/7.x/fun-emoji/svg?seed=Alya'">
+    <h1>DrawnStore</h1>
+  </div>
+  <div class="toggle">
+    <button id="btnLight" class="active"><i class="fas fa-sun"></i> Terang</button>
+    <button id="btnDark"><i class="fas fa-moon"></i> Gelap</button>
+  </div>
+</header>
+
+<!-- ===== UCAPAN SELAMAT DATANG ===== -->
+<section class="welcome">
+  <h2>Selamat Datang di DrawnStore! <span class="wave">👋</span></h2>
+  <p>Pusat produk digital terlengkap & terpercaya — harga murah, proses cepat, stok selalu ready.<br>Yuk pilih produk favoritmu di bawah ini! 🛒✨</p>
+</section>
+
+<main class="grid" id="grid"></main>
+
+<!-- ===== TULISAN PENUTUP ===== -->
+<section class="closing">
+  <h3>Terima Kasih Telah Berkunjung 🙏</h3>
+  <div class="divider"></div>
+  <p>
+    Semua produk di <strong>DrawnStore</strong> dijual dengan harga terjangkau dan proses cepat.<br>
+    Kalau ada pertanyaan atau mau order, langsung chat admin via WhatsApp ya.<br>
+    Jangan lupa follow & bagikan ke temanmu <span class="heart">❤️</span>
+  </p>
+  <p style="margin-top:14px;font-weight:700;color:var(--accent);">
+    ✨ DrawnStore — Murah, Cepat, Terpercaya ✨
+  </p>
+</section>
+
+<footer>
+  <p><i class="fas fa-bolt" style="color:var(--accent)"></i> DrawnStore — Produk Digital Terlengkap & Terpercaya</p>
+  <p style="margin-top:6px;">© 2025 DrawnStore. Transaksi via WhatsApp.</p>
+</footer>
+
+<!-- MODAL BELI -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="close" id="closeBtn"><i class="fas fa-times"></i></button>
+    <h2>Beli Produk</h2>
+    <p class="sub">Konfirmasi pembelian via WhatsApp</p>
+
+    <div class="info-box">
+      <div class="info-row">
+        <span>Produk</span>
+        <span id="mName">-</span>
+      </div>
+      <div class="info-row">
+        <span>Harga</span>
+        <span id="mPrice">-</span>
+      </div>
+      <div class="info-row">
+        <span>Status</span>
+        <span id="mStock">-</span>
+      </div>
+    </div>
+
+    <button class="btn-wa" id="waBtn">
+      <i class="fab fa-whatsapp"></i> Beli via WhatsApp
+    </button>
+  </div>
+</div>
+
+<script>
+/* ============ DATA PRODUK ============ */
+const products = [
+  { id:1, name:"APK QR ALL PAY TANPA KTP", price:3000, stock:"ready",
+    desc:"Scan & bayar semua QRIS tanpa verifikasi KTP. Praktis & cepat.",
+    icon:"fa-solid fa-qrcode" },
+  { id:2, name:"WEB SPAM OTP WA", price:2000, stock:"ready",
+    desc:"Tools spam OTP WhatsApp untuk berbagai keperluan (gunakan bijak).",
+    icon:"fa-solid fa-comment-dots" },
+  { id:3, name:"APK NONTON FILM GRATIS", price:1000, stock:"ready",
+    desc:"Aplikasi streaming film gratis tanpa batas, kualitas HD.",
+    icon:"fa-solid fa-film" },
+  { id:4, name:"NOKOS WA INDO", price:5000, stock:"ready",
+    desc:"Nomor kosong WhatsApp Indonesia siap pakai, aman & murah.",
+    icon:"fa-solid fa-phone" },
+  { id:5, name:"DOKUMEN SAKTI VERIF TIKTOK BISNIS", price:5000, stock:"ready",
+    desc:"Dokumen lengkap untuk verifikasi akun TikTok Bisnis. Proses cepat.",
+    icon:"fa-solid fa-file-invoice" },
+  { id:6, name:"JASA SUNTIK SL (CHAT ADMIN)", price:null, stock:"ready",
+    desc:"Jasa suntik social media (SL) semua platform. Hubungi admin.",
+    icon:"fa-solid fa-chart-line" },
+  { id:7, name:"AM PREMIUM 1 TAHUN", price:3000, stock:"ready",
+    desc:"Alight Motion Premium 1 tahun full fitur. Akun aman.",
+    icon:"fa-solid fa-crown" },
+  { id:8, name:"BUG WA JESTER (CHAT ADMIN)", price:null, stock:"ready",
+    desc:"Bug WhatsApp Jester, langsung chat admin untuk info & harga.",
+    icon:"fa-solid fa-bug" }
+];
+
+/* ============ NOMOR WHATSAPP ADMIN ============ */
+const ADMIN_WA = "6289682380778";
+
+/* ============ RENDER PRODUK ============ */
+const grid = document.getElementById('grid');
+
+function formatHarga(p) {
+  return p.price === null ? 'Chat Admin' : 'Rp' + p.price.toLocaleString('id-ID');
+}
+
+grid.innerHTML = products.map(p => {
+  const stockClass = p.stock === 'ready' ? 'ready' : 'out';
+  const stockText  = p.stock === 'ready' ? 'READY' : 'OUT';
+  const hargaText  = formatHarga(p);
+  const suffix     = p.price === null ? '' : '<small>IDR</small>';
+
+  return `
+    <div class="card">
+      <span class="badge ${stockClass}">${stockText}</span>
+      <div class="img"><i class="${p.icon}"></i></div>
+      <h3 class="name">${p.name}</h3>
+      <p class="desc">${p.desc}</p>
+      <div class="price">${hargaText}${suffix}</div>
+      <button class="btn-buy" data-id="${p.id}">
+        <i class="fas fa-shopping-cart"></i> Beli
+      </button>
+    </div>
+  `;
+}).join('');
+
+/* ============ TEMA GELAP / TERANG ============ */
+const btnLight = document.getElementById('btnLight');
+const btnDark  = document.getElementById('btnDark');
+
+function setTheme(mode) {
+  if (mode === 'dark') {
+    document.body.classList.add('dark');
+    btnDark.classList.add('active');
+    btnLight.classList.remove('active');
+  } else {
+    document.body.classList.remove('dark');
+    btnLight.classList.add('active');
+    btnDark.classList.remove('active');
+  }
+  localStorage.setItem('drawnstore-theme', mode);
+}
+
+setTheme(localStorage.getItem('drawnstore-theme') || 'light');
+
+btnLight.addEventListener('click', () => setTheme('light'));
+btnDark.addEventListener('click', () => setTheme('dark'));
+
+/* ============ MODAL BELI ============ */
+const overlay  = document.getElementById('overlay');
+const closeBtn = document.getElementById('closeBtn');
+const mName    = document.getElementById('mName');
+const mPrice   = document.getElementById('mPrice');
+const mStock   = document.getElementById('mStock');
+const waBtn    = document.getElementById('waBtn');
+
+let selected = null;
+
+function openModal(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  selected = p;
+  mName.textContent  = p.name;
+  mPrice.textContent = formatHarga(p);
+  mStock.textContent = p.stock === 'ready' ? '🟢 Ready Stock' : '🔴 Out of Stock';
+  overlay.classList.add('show');
+}
+
+function closeModal() {
+  overlay.classList.remove('show');
+  selected = null;
+}
+
+grid.addEventListener('click', e => {
+  const btn = e.target.closest('.btn-buy');
+  if (!btn) return;
+  openModal(Number(btn.dataset.id));
+});
+
+closeBtn.addEventListener('click', closeModal);
+overlay.addEventListener('click', e => {
+  if (e.target === overlay) closeModal();
+});
+
+/* ============ TOMBOL WHATSAPP ============ */
+waBtn.addEventListener('click', () => {
+  if (!selected) return;
+  const pesan = `Bang mau beli ${selected.name}`;
+  const waUrl = `https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(pesan)}`;
+  window.open(waUrl, '_blank');
+  closeModal();
+});
+</script>
+</body>
+</html>
